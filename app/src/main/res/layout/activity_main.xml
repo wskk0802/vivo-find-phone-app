@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 澎湃OS 生命感美学 主界面
+     特征：毛玻璃AppBar + 大圆角卡片 + 通透悬浮感 + 柔和渐变 -->
+<androidx.coordinatorlayout.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/hyper_bg_primary"
+    android:fitsSystemWindows="false"
+    tools:context=".ui.main.MainActivity">
+
+    <!-- ========== 顶部毛玻璃 AppBar ========== -->
+    <com.google.android.material.appbar.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@android:color/transparent"
+        app:elevation="0dp"
+        android:fitsSystemWindows="true">
+
+        <!-- 渐变 Toolbar -->
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="@drawable/toolbar_gradient"
+            android:fitsSystemWindows="true"
+            app:titleTextColor="@android:color/white"
+            app:subtitleTextColor="#CCFFFFFF"
+            app:popupTheme="@style/Theme.MaterialComponents.Light">
+
+            <!-- 右侧操作按钮 -->
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="end"
+                android:orientation="horizontal"
+                android:gravity="center"
+                android:paddingEnd="4dp">
+
+                <!-- 刷新按钮 -->
+                <ImageButton
+                    android:id="@+id/btnToolbarRefresh"
+                    android:layout_width="42dp"
+                    android:layout_height="42dp"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:src="@android:drawable/ic_popup_sync"
+                    android:contentDescription="刷新"
+                    android:padding="10dp"
+                    app:tint="#FFFFFF" />
+
+                <!-- 更多菜单 -->
+                <ImageButton
+                    android:id="@+id/btnToolbarMenu"
+                    android:layout_width="42dp"
+                    android:layout_height="42dp"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:src="@android:drawable/ic_menu_more"
+                    android:contentDescription="更多"
+                    android:padding="10dp"
+                    app:tint="#FFFFFF" />
+
+            </LinearLayout>
+
+        </androidx.appcompat.widget.Toolbar>
+
+        <!-- 进度条：渐变细线 -->
+        <ProgressBar
+            android:id="@+id/progressBar"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:layout_width="match_parent"
+            android:layout_height="2dp"
+            android:max="100"
+            android:progressDrawable="@drawable/progress_bar_drawable"
+            android:visibility="gone" />
+
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <!-- ========== 下拉刷新 + WebView ========== -->
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:id="@+id/swipeRefresh"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+        <!-- WebView 包裹在卡片中，实现悬浮感 -->
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:padding="8dp">
+
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                app:cardCornerRadius="24dp"
+                app:cardElevation="2dp"
+                app:cardBackgroundColor="#FFFFFF"
+                app:strokeWidth="0.5dp"
+                app:strokeColor="#12E8E9F0">
+
+                <WebView
+                    android:id="@+id/webView"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@android:color/white"
+                    android:clipToOutline="true" />
+
+            </androidx.cardview.widget.CardView>
+
+        </FrameLayout>
+
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+
+    <!-- ========== 加载中遮罩（毛玻璃效果） ========== -->
+    <FrameLayout
+        android:id="@+id/loadingOverlay"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#80F5F6FA"
+        android:visibility="gone">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:background="@drawable/bg_loading_card"
+            android:padding="32dp">
+
+            <ProgressBar
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:indeterminateTint="@color/hyper_primary" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="正在加载..."
+                android:textColor="@color/hyper_text_secondary"
+                android:textSize="14sp" />
+
+        </LinearLayout>
+
+    </FrameLayout>
+
+    <!-- ========== 底部悬浮按钮组 ========== -->
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fabRefresh"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:layout_marginEnd="20dp"
+        android:layout_marginBottom="88dp"
+        android:contentDescription="刷新位置"
+        app:srcCompat="@android:drawable/ic_popup_sync"
+        app:backgroundTint="@color/hyper_primary"
+        app:tint="@android:color/white"
+        app:fabSize="normal"
+        app:elevation="8dp"
+        app:pressedTranslationZ="4dp" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fabSettings"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:layout_marginEnd="20dp"
+        android:layout_marginBottom="20dp"
+        android:contentDescription="设置"
+        app:srcCompat="@android:drawable/ic_menu_preferences"
+        app:backgroundTint="@color/hyper_primary_light"
+        app:tint="@android:color/white"
+        app:fabSize="mini"
+        app:elevation="6dp"
+        app:pressedTranslationZ="2dp" />
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>
