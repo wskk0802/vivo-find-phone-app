@@ -1,0 +1,252 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 澎湃OS 风格 设置界面
+     特征：毛玻璃卡片分组 + 大圆角 + 通透悬浮 + 柔和渐变背景 -->
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/bg_splash"
+    android:fitsSystemWindows="true"
+    tools:context=".ui.settings.SettingsActivity">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <!-- ========== 安全设置卡片 ========== -->
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:cardCornerRadius="24dp"
+            app:cardElevation="0dp"
+            app:cardBackgroundColor="#CCFFFFFF"
+            app:strokeWidth="1dp"
+            app:strokeColor="#33FFFFFF">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <!-- 卡片标题 -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:padding="20dp">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="🔒 安全设置"
+                        android:textSize="17sp"
+                        android:textStyle="bold"
+                        android:textColor="@color/hyper_text_primary" />
+
+                </LinearLayout>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="0.5dp"
+                    android:background="@color/hyper_divider)" />
+
+                <!-- 指纹验证开关项 -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:padding="20dp"
+                    android:background="@drawable/bg_list_item">
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+
+                        <Switch
+                            android:id="@+id/swBiometric"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="指纹/面容验证"
+                            android:textSize="16sp"
+                            android:textColor="@color/hyper_text_primary"
+                            android:thumbTint="@color/hyper_primary"
+                            android:trackTint="#408B95D6" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="6dp"
+                            android:text="打开App时验证身份，保护隐私"
+                            android:textSize="13sp"
+                            android:textColor="@color/hyper_text_tertiary" />
+
+                    </LinearLayout>
+                </LinearLayout>
+
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
+        <!-- ========== 账号管理卡片 ========== -->
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            app:cardCornerRadius="24dp"
+            app:cardElevation="0dp"
+            app:cardBackgroundColor="#CCFFFFFF"
+            app:strokeWidth="1dp"
+            app:strokeColor="#33FFFFFF">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:padding="20dp">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="👤 账号管理"
+                        android:textSize="17sp"
+                        android:textStyle="bold"
+                        android:textColor="@color/hyper_text_primary" />
+
+                </LinearLayout>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="0.5dp"
+                    android:background="@color/hyper_divider" />
+
+                <!-- 编辑账号 -->
+                <Button
+                    android:id="@+id/btnEditAccount"
+                    style="@style/Widget.AppCompat.Button.Borderless"
+                    android:layout_width="match_parent"
+                    android:layout_height="56dp"
+                    android:gravity="start|center_vertical"
+                    android:paddingStart="20dp"
+                    android:paddingEnd="20dp"
+                    android:text="修改 vivo 账号密码"
+                    android:textColor="@color/hyper_text_primary"
+                    android:textSize="16sp"
+                    android:background="@drawable/bg_list_item"
+                    android:drawableEnd="@android:drawable/ic_menu_more"
+                    app:drawableTint="@color/hyper_text_tertiary" />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="0.5dp"
+                    android:background="@color/hyper_divider)" />
+
+                <!-- 清除数据 -->
+                <Button
+                    android:id="@+id/btnClearAll"
+                    style="@style/Widget.AppCompat.Button.Borderless"
+                    android:layout_width="match_parent"
+                    android:layout_height="56dp"
+                    android:gravity="start|center_vertical"
+                    android:paddingStart="20dp"
+                    android:paddingEnd="20dp"
+                    android:text="清除所有数据"
+                    android:textColor="#EA4335"
+                    android:textSize="16sp"
+                    android:background="@drawable/bg_list_item" />
+
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
+        <!-- ========== 关于卡片 ========== -->
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="24dp"
+            app:cardCornerRadius="24dp"
+            app:cardElevation="0dp"
+            app:cardBackgroundColor="#CCFFFFFF"
+            app:strokeWidth="1dp"
+            app:strokeColor="#33FFFFFF">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:padding="20dp">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="ℹ️ 关于"
+                        android:textSize="17sp"
+                        android:textStyle="bold"
+                        android:textColor="@color/hyper_text_primary" />
+
+                </LinearLayout>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="0.5dp"
+                    android:background="@color/hyper_divider" />
+
+                <Button
+                    android:id="@+id/btnAbout"
+                    style="@style/Widget.AppCompat.Button.Borderless"
+                    android:layout_width="match_parent"
+                    android:layout_height="56dp"
+                    android:gravity="start|center_vertical"
+                    android:paddingStart="20dp"
+                    android:paddingEnd="20dp"
+                    android:text="关于本应用"
+                    android:textColor="@color/hyper_text_primary"
+                    android:textSize="16sp"
+                    android:background="@drawable/bg_list_item" />
+
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
+        <!-- ========== 底部信息 ========== -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="8dp"
+            android:text="亲友位置查找"
+            android:textSize="13sp"
+            android:textColor="@color/hyper_text_tertiary" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="4dp"
+            android:text="非官方应用 · 仅封装 vivo 云服务网页端"
+            android:textSize="11sp"
+            android:textColor="@color/hyper_text_tertiary"
+            android:alpha="0.7" />
+
+    </LinearLayout>
+</ScrollView>
