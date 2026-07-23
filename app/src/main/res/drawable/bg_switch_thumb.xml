@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 澎湃OS 风格开关 Thumb：圆形 + 紫色渐变 -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="oval">
+    <gradient
+        android:angle="135"
+        android:startColor="#7C8CF8"
+        android:endColor="#5B6ABF" />
+    <size
+        android:width="22dp"
+        android:height="22dp" />
+    <stroke
+        android:width="2dp"
+        android:color="#FFFFFF" />
+</shape>
