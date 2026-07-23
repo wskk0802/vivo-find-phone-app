@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 澎湃OS 风格卡片：白色底 + 24dp大圆角 + 极淡阴影 -->
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- 柔和阴影 -->
+    <item>
+        <shape android:shape="rectangle">
+            <solid android:color="#08000000" />
+            <corners android:radius="24dp" />
+        </shape>
+    </item>
+
+    <!-- 白色卡片主体 -->
+    <item
+        android:left="0dp"
+        android:right="0dp"
+        android:top="0dp"
+        android:bottom="1dp">
+        <shape android:shape="rectangle">
+            <solid android:color="#FFFFFF" />
+            <corners android:radius="24dp" />
+            <!-- 顶部微光描边 -->
+            <stroke
+                android:width="0.5dp"
+                android:color="#12E8E9F0" />
+        </shape>
+    </item>
+
+</layer-list>
