@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 澎湃OS 风格启动屏/Loading 背景：柔和蓝紫渐变 -->
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- 主渐变 -->
+    <item>
+        <shape android:shape="rectangle">
+            <gradient
+                android:angle="135"
+                android:startColor="#E8E9F8"
+                android:centerColor="#F0F1F8"
+                android:endColor="#FFFFFF" />
+        </shape>
+    </item>
+
+    <!-- 装饰光晕 -->
+    <item android:gravity="top|end">
+        <shape android:shape="oval">
+            <gradient
+                android:angle="0"
+                android:startColor="#338B95D6"
+                android:endColor="#00FFFFFF" />
+            <size
+                android:width="200dp"
+                android:height="200dp" />
+        </shape>
+    </item>
+
+    <item android:gravity="bottom|start">
+        <shape android:shape="oval">
+            <gradient
+                android:angle="0"
+                android:startColor="#337C8CF8"
+                android:endColor="#00FFFFFF" />
+            <size
+                android:width="180dp"
+                android:height="180dp" />
+        </shape>
+    </item>
+
+</layer-list>
