@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+
+    <!-- 定位图标本体（白色） -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M54,20 C39,20 27,32 27,47 C27,65 54,92 54,92 C54,92 81,65 81,47 C81,32 69,20 54,20 Z" />
+    <!-- 内部圆点 -->
+    <path
+        android:fillColor="#4158D0"
+        android:pathData="M54,36 C48,36 44,40 44,47 C44,53 48,57 54,57 C60,57 64,53 64,47 C64,40 60,36 54,36 Z" />
+
+</vector>
