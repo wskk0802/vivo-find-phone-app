@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- ============ 澎湃OS 生命感美学 主题 ============ -->
+    <style name="Theme.VivoFindPhone" parent="Theme.MaterialComponents.Light.NoActionBar">
+        <!-- 状态栏：透明，内容延伸到状态栏下方 -->
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:windowLightStatusBar">true</item>
+
+        <!-- 导航栏：浅色 -->
+        <item name="android:navigationBarColor">#F5F6FA</item>
+        <item name="android:windowLightNavigationBar">true</item>
+
+        <!-- 主色调：澎湃OS 蓝紫色系 -->
+        <item name="colorPrimary">#5B6ABF</item>
+        <item name="colorPrimaryDark">#3F4A99</item>
+        <item name="colorAccent">#7C8CF8</item>
+
+        <!-- 窗口背景：浅灰白，通透感 -->
+        <item name="android:windowBackground">@color/hyper_bg_primary</item>
+
+        <!-- 圆角卡片风格 -->
+        <item name="materialCardViewStyle">@style/HyperCardView</item>
+
+        <!-- 按钮圆角 -->
+        <item name="materialButtonStyle">@style/HyperButton</item>
+
+        <!-- 对话框风格 -->
+        <item name="alertDialogTheme">@style/HyperAlertDialog</item>
+
+        <!-- 启用边缘到边缘显示 -->
+        <item name="android:windowDrawsSystemBarBackgrounds">true</item>
+    </style>
+
+    <!-- 毛玻璃卡片 View 样式 -->
+    <style name="HyperGlassCard">
+        <item name="android:background">@drawable/bg_glass_card</item>
+        <item name="android:elevation">0dp</item>
+    </style>
+
+    <!-- 普通卡片 View 样式 -->
+    <style name="HyperCard">
+        <item name="android:background">@drawable/bg_hyper_card</item>
+        <item name="android:elevation">0dp</item>
+    </style>
+
+    <!-- CardView 基础样式 -->
+    <style name="HyperCardView" parent="Widget.MaterialComponents.CardView">
+        <item name="cardCornerRadius">24dp</item>
+        <item name="cardElevation">0dp</item>
+        <item name="cardBackgroundColor">@color/hyper_bg_card</item>
+        <item name="strokeWidth">1dp</item>
+        <item name="strokeColor">#15E8E9F0</item>
+    </style>
+
+    <!-- 按钮样式：大圆角 + 渐变 -->
+    <style name="HyperButton" parent="Widget.MaterialComponents.Button">
+        <item name="android:minHeight">52dp</item>
+        <item name="cornerRadius">16dp</item>
+        <item name="backgroundTint">@null</item>
+        <item name="android:background">@drawable/bg_hyper_button</item>
+        <item name="android:textColor">#FFFFFF</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:fontFamily">sans-serif-medium</item>
+        <item name="android:letterSpacing">0.02</item>
+    </style>
+
+    <!-- 对话框样式：大圆角毛玻璃 -->
+    <style name="HyperAlertDialog" parent="Theme.MaterialComponents.Light.Dialog.Alert">
+        <item name="dialogCornerRadius">24dp</item>
+        <item name="android:windowBackground">@drawable/bg_glass_dialog</item>
+        <item name="android:textColorPrimary">@color/hyper_text_primary</item>
+        <item name="android:textColor">@color/hyper_text_secondary</item>
+    </style>
+
+    <!-- Toolbar 样式 -->
+    <style name="HyperToolbar" parent="Widget.AppCompat.Toolbar">
+        <item name="android:background">@android:color/transparent</item>
+        <item name="android:elevation">0dp</item>
+        <item name="titleTextColor">@color/hyper_text_primary</item>
+        <item name="subtitleTextColor">@color/hyper_text_secondary</item>
+        <item name="android:fontFamily">sans-serif-medium</item>
+    </style>
+
+    <!-- 输入框样式 -->
+    <style name="HyperTextInput" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+        <item name="boxCornerRadiusTopStart">16dp</item>
+        <item name="boxCornerRadiusTopEnd">16dp</item>
+        <item name="boxCornerRadiusBottomStart">16dp</item>
+        <item name="boxCornerRadiusBottomEnd">16dp</item>
+        <item name="boxStrokeColor">@color/hyper_primary</item>
+        <item name="boxStrokeWidth">1.5dp</item>
+        <item name="hintTextColor">@color/hyper_text_tertiary</item>
+        <item name="android:textColorHint">@color/hyper_text_tertiary</item>
+    </style>
+
+    <!-- 悬浮按钮风格 -->
+    <style name="HyperFab" parent="Widget.MaterialComponents.FloatingActionButton">
+        <item name="backgroundTint">@color/hyper_primary</item>
+        <item name="tint">#FFFFFF</item>
+        <item name="elevation">6dp</item>
+        <item name="pressedTranslationZ">2dp</item>
+    </style>
+
+</resources>
