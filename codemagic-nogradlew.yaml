@@ -1,0 +1,39 @@
+workflows:
+  build:
+    name: Build APK
+    instance_type: mac_mini_m2
+    max_build_duration: 30
+    
+    environment:
+      groups:
+        - android
+    
+    scripts:
+      - name: Install Gradle
+        script: |
+          cd $CM_BUILD_DIR
+          # 下载安装gradle（不依赖gradlew）
+          wget -q https://services.gradle.org/distributions/gradle-8.5-bin.zip -O /tmp/gradle.zip
+          unzip -q /tmp/gradle.zip -d /opt/
+          export PATH=/opt/gradle-8.5/bin:$PATH
+          gradle --version
+          echo "GRADLE_HOME=/opt/gradle-8.5" >> $CM_ENV_FILE
+          echo "PATH=\$PATH:/opt/gradle-8.5/bin" >> $CM_ENV_FILE
+          
+      - name: Build APK with Gradle
+        script: |
+          cd $CM_BUILD_DIR
+          echo "sdk.dir=$ANDROID_SDK_ROOT" > local.properties
+          # 用系统gradle命令而不是gradlew
+          gradle clean assembleDebug --no-daemon --console=plain --stacktrace 2>&1
+          
+    artifacts:
+      - app/build/outputs/apk/debug/app-debug.apk
+    
+    publishing:
+      email:
+        recipients:
+          - 2823893928@qq.com
+        notify:
+          success: true
+          failure: true
