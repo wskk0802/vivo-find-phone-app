@@ -1,0 +1,35 @@
+# Codemagic 自动编译配置
+# 使用方法：把此文件放到仓库根目录，Codemagic会自动识别
+
+workflows:
+  android-build:
+    name: Android Debug APK
+    instance_type: mac_mini_m2
+    max_build_duration: 15
+    
+    environment:
+      android: true
+      java: 17
+      groups:
+        - android
+    
+    scripts:
+      - name: Set up Gradle
+        script: |
+          echo "sdk.dir=$ANDROID_SDK_ROOT" > local.properties
+          
+      - name: Build APK
+        script: |
+          chmod +x gradlew
+          ./gradlew clean assembleDebug --no-daemon
+          
+    artifacts:
+      - app/build/outputs/apk/debug/*.apk
+    
+    publishing:
+      email:
+        recipients:
+          - 2823893928@qq.com
+        notify:
+          success: true
+          failure: true
