@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- 蓝色背景圆角矩形 -->
+    <item>
+        <shape android:shape="rectangle">
+            <solid android:color="#4158D0" />
+            <corners android:radius="20dp" />
+        </shape>
+    </item>
+    <!-- 定位图标（使用 Unicode 风格） -->
+    <item
+        android:drawable="@android:drawable/ic_menu_mylocation"
+        android:width="48dp"
+        android:height="48dp"
+        android:gravity="center" />
+</layer-list>
