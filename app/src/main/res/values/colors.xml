@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- ============ 澎湃OS 生命感美学 配色体系 ============ -->
+
+    <!-- 品牌主色：蓝紫渐变 -->
+    <color name="hyper_primary">#5B6ABF</color>
+    <color name="hyper_primary_light">#8B95D6</color>
+    <color name="hyper_primary_dark">#3F4A99</color>
+    <color name="hyper_accent">#7C8CF8</color>
+
+    <!-- 渐变起点/终点 -->
+    <color name="hyper_gradient_start">#6C7AE0</color>
+    <color name="hyper_gradient_mid">#8B95D6</color>
+    <color name="hyper_gradient_end">#B8C0FF</color>
+
+    <!-- 背景色：浅色通透 -->
+    <color name="hyper_bg_primary">#F5F6FA</color>
+    <color name="hyper_bg_secondary">#FFFFFF</color>
+    <color name="hyper_bg_card">#FFFFFF</color>
+    <color name="hyper_bg_glass">#CCFFFFFF</color>
+
+    <!-- 文字色 -->
+    <color name="hyper_text_primary">#1A1A2E</color>
+    <color name="hyper_text_secondary">#5C5C7A</color>
+    <color name="hyper_text_tertiary">#8E8EA8</color>
+    <color name="hyper_text_on_primary">#FFFFFF</color>
+
+    <!-- 分割线 -->
+    <color name="hyper_divider">#E8E9F0</color>
+
+    <!-- 状态色 -->
+    <color name="hyper_success">#34A853</color>
+    <color name="hyper_warning">#FBBC05</color>
+    <color name="hyper_error">#EA4335</color>
+
+    <!-- 功能色（澎湃OS 专属色系） -->
+    <color name="hyper_blue">#5B6ABF</color>
+    <color name="hyper_teal">#4DB6AC</color>
+    <color name="hyper_orange">#FF8A65</color>
+
+    <!-- 兼容旧引用 -->
+    <color name="vivo_blue">#5B6ABF</color>
+    <color name="vivo_light_blue">#8B95D6</color>
+    <color name="vivo_dark_blue">#3F4A99</color>
+    <color name="white">#FFFFFF</color>
+    <color name="black">#000000</color>
+    <color name="gray_light">#F5F6FA</color>
+    <color name="gray_medium">#8E8EA8</color>
+    <color name="gray_dark">#1A1A2E</color>
+    <color name="red_error">#EA4335</color>
+    <color name="green_success">#34A853</color>
+</resources>
