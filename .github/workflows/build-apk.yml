@@ -19,89 +19,101 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
 
-      - name: Setup Android SDK
-        uses: android-actions/setup-android@v3
-        with:
-          api-level: 34
-          build-tools: '34.0.0'
-
-      - name: Prepare environment
+      - name: Install Android SDK + Build APK
         run: |
-          # 确保ANDROID_HOME正确
-          echo "ANDROID_HOME=$ANDROID_HOME" >> $GITHUB_ENV
+          set -x  # 开启命令回显
+          
+          echo "===== STEP 1: 安装Android SDK ====="
+          export ANDROID_HOME=$HOME/android-sdk
+          mkdir -p $ANDROID_HOME/cmdline-tools
+          
+          # 下载命令行工具
+          wget -q "https://dl.google.com/android/repository/commandlinetools-linux-11076708_latest.zip" -O /tmp/cmdtools.zip
+          if [ ! -s /tmp/cmdtools.zip ]; then
+            echo "ERROR: cmdtools下载失败"
+            ls -la /tmp/cmdtools.zip
+            exit 1
+          fi
+          
+          unzip -q /tmp/cmdtools.zip -d $ANDROID_HOME/cmdline-tools/
+          mkdir -p $ANDROID_HOME/cmdline-tools/latest
+          mv $ANDROID_HOME/cmdline-tools/cmdline-tools/* $ANDROID_HOME/cmdline-tools/latest/ 2>/dev/null || true
+          
+          export PATH=$ANDROID_HOME/cmdline-tools/latest/bin:$PATH
+          
+          echo "===== STEP 2: 接受许可证 ====="
+          yes | sdkmanager --licenses || true
+          
+          echo "===== STEP 3: 安装SDK组件 ====="
+          sdkmanager "platforms;android-34" "build-tools;34.0.0" "platform-tools"
+          
+          echo "===== STEP 4: 验证SDK ====="
+          ls $ANDROID_HOME/platforms/
+          ls $ANDROID_HOME/build-tools/
+          
+          echo "===== STEP 5: 安装Gradle ====="
+          wget -q "https://services.gradle.org/distributions/gradle-8.5-bin.zip" -O /tmp/gradle.zip
+          unzip -q /tmp/gradle.zip -d /opt/
+          export PATH=/opt/gradle-8.5/bin:$PATH
+          gradle --version
+          
+          echo "===== STEP 6: 创建配置文件 ====="
+          # local.properties
           echo "sdk.dir=$ANDROID_HOME" > local.properties
           
-          # 创建gradle.properties
+          # gradle.properties
           mkdir -p ~/.gradle
-          cat > ~/.gradle/gradle.properties << 'EOF'
+          cat > ~/.gradle/gradle.properties << 'GP'
           org.gradle.jvmargs=-Xmx2048m -Dfile.encoding=UTF-8
-          org.gradle.parallel=true
           org.gradle.daemon=false
           android.useAndroidX=true
-          android.enableJetifier=true
-          EOF
+          GP
           
-          echo "=== Environment ==="
-          echo "ANDROID_HOME=$ANDROID_HOME"
-          ls $ANDROID_HOME/
-          echo ""
-          echo "=== Java ==="
-          java -version
-          echo ""
-          echo "=== local.properties ==="
-          cat local.properties
-
-      - name: Download Gradle and build
-        run: |
-          # 手动下载安装Gradle
-          cd /tmp
-          wget -q https://services.gradle.org/distributions/gradle-8.5-bin.zip
-          unzip -q gradle-8.5-bin.zip
-          export GRADLE_HOME=/tmp/gradle-8.5
-          export PATH=$GRADLE_HOME/bin:$PATH
-          
+          echo "===== STEP 7: 开始构建 ====="
           cd $GITHUB_WORKSPACE
           
-          # 使用gradle命令构建
+          # 确保gradlew有执行权限
+          chmod +x gradlew 2>/dev/null || true
+          
+          # 尝试用gradle命令直接构建
           gradle clean assembleDebug --no-daemon --stacktrace 2>&1
+          
+          echo "===== STEP 8: 检查输出 ====="
+          find . -name "*.apk" -exec ls -la {} \;
+          ls -la app/build/outputs/apk/debug/ 2>/dev/null
+          
+          # 如果成功，复制到output
+          mkdir -p output
+          cp app/build/outputs/apk/debug/*.apk output/ 2>/dev/null || echo "WARNING: 没有找到APK文件"
+          
+          echo "===== DONE ====="
         env:
-          ANDROID_HOME: /usr/local/lib/android/sdk
+          ANDROID_HOME: /home/runner/android-sdk
 
       - name: Upload APK
         if: success()
         uses: actions/upload-artifact@v4
         with:
           name: vivo-find-phone-apk
-          path: app/build/outputs/apk/debug/app-debug.apk
+          path: output/*.apk
           retention-days: 30
       
-      - name: Debug on failure
+      - name: Show all files on failure
         if: failure()
         run: |
-          echo "===== FULL DEBUG INFO ====="
+          echo "===== COMPLETE DIRECTORY LISTING ====="
+          find . -type f -not -path "*/.git/*" -not -path "*/build/*" | sort
           echo ""
-          echo "--- Directory structure ---"
-          find . -maxdepth 3 -type f -not -path "*/.git/*" | head -30
+          echo "===== BUILD DIRECTORY ====="
+          ls -laR app/build/ 2>/dev/null | head -50
           echo ""
-          echo "--- Android SDK ---"
-          ls $ANDROID_HOME/
-          ls $ANDROID_HOME/platforms/ 2>/dev/null || echo "no platforms"
-          ls $ANDROID_HOME/build-tools/ 2>/dev/null || echo "no build-tools"
+          echo "===== ANDROID HOME ====="
+          ls -la $ANDROID_HOME/
+          ls -la $ANDROID_HOME/platforms/ 2>/dev/null
+          ls -la $ANDROID_HOME/build-tools/ 2>/dev/null
           echo ""
-          echo "--- Gradle version ---"
-          gradle --version 2>/dev/null || echo "gradle not found"
+          echo "===== GRADLE CACHE ====="
+          ls -la ~/.gradle/caches/modules-2/files-2.1/ 2>/dev/null | head -20
           echo ""
-          echo "--- app/build contents ---"
-          ls -la app/build/ 2>/dev/null
-          ls -la app/build/outputs/ 2>/dev/null
-          ls -la app/build/outputs/apk/ 2>/dev/null
-          echo ""
-          echo "--- Search for any APK ---"
-          find . -name "*.apk" 2>/dev/null
-          echo ""
-          echo "--- gradle build cache ---"
-          ls -la ~/.gradle/caches/ 2>/dev/null | head -10
-          echo ""
-          echo "--- Build logs ---"
-          find . -name "*.log" -path "*/build/*" 2>/dev/null | head -5
-          find /tmp -name "*.log" 2>/dev/null | head -5
+          echo "===== Any APK anywhere? ====="
+          find / -name "*.apk" 2>/dev/null
