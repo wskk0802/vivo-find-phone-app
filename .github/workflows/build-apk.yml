@@ -23,9 +23,8 @@ jobs:
         run: |
           wget -q https://services.gradle.org/distributions/gradle-8.5-bin.zip -O /tmp/gradle.zip
           unzip -q /tmp/gradle.zip -d /opt/
-          echo "export PATH=/opt/gradle-8.5/bin:$PATH" >> $GITHUB_ENV
           echo "/opt/gradle-8.5/bin" >> $GITHUB_PATH
-          /opt/gradle-8.5/bin/gradle --version
+          gradle --version
 
       - name: Setup Android SDK
         uses: android-actions/setup-android@v3
@@ -33,18 +32,34 @@ jobs:
           api-level: 34
           build-tools: '34.0.0'
 
-      - name: Build Debug APK
-        run: gradle assembleDebug --no-daemon --stacktrace
-
-      - name: List output files
+      - name: Show environment
         run: |
-          echo "=== 检查APK输出 ==="
-          find . -name "*.apk" 2>/dev/null
-          ls -la app/build/outputs/apk/debug/ 2>/dev/null || echo "debug目录不存在"
+          echo "=== Java ==="
+          java -version
+          echo "=== Gradle ==="
+          gradle --version
+          echo "=== Android SDK ==="
+          ls $ANDROID_HOME/
+          echo "=== Project structure ==="
+          ls -la
+          cat settings.gradle
+          echo "=== app/build.gradle ==="
+          cat app/build.gradle
 
-      - name: Upload APK
-        uses: actions/upload-artifact@v4
-        with:
-          name: vivo-find-phone-apk
-          path: app/build/outputs/apk/debug/app-debug.apk
-          retention-days: 30
+      - name: Build Debug APK with verbose output
+        run: gradle assembleDebug --no-daemon --info --stacktrace 2>&1 | tail -100
+        continue-on-error: true
+
+      - name: Show build output on failure
+        if: failure()
+        run: |
+          echo "=== build directory ==="
+          ls -la app/build/ 2>/dev/null || echo "no build dir"
+          echo "=== gradle error logs ==="
+          find . -name "*.log" -path "*/build/*" 2>/dev/null | head -5
+          echo "=== check if APK was created anyway ==="
+          find . -name "*.apk" 2>/dev/null
+          echo "=== app/src/main ==="
+          ls -la app/src/main/
+          echo "=== AndroidManifest ==="
+          cat app/src/main/AndroidManifest.xml
