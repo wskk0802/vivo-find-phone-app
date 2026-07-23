@@ -2,26 +2,29 @@ workflows:
   android-build:
     name: Android Debug APK
     instance_type: mac_mini_m2
-    max_build_duration: 15
+    max_build_duration: 20
     
     environment:
       groups:
         - android
-      vars:
-        JAVA_HOME: /usr/lib/jvm/temurin-17-hotspot-amd64
+      java: 17
     
     scripts:
-      - name: Set up local.properties
+      - name: Set up environment
         script: |
-          echo "sdk.dir=$ANDROID_SDK_ROOT" > local.properties
+          # 不手动设置JAVA_HOME，让Codemagic自动管理
+          java -version
+          echo "ANDROID_SDK_ROOT=$ANDROID_SDK_ROOT"
           
       - name: Build APK
         script: |
+          cd $CM_BUILD_DIR
+          echo "sdk.dir=$ANDROID_SDK_ROOT" > local.properties
           chmod +x gradlew
-          ./gradlew clean assembleDebug --no-daemon --stacktrace
+          ./gradlew assembleDebug --no-daemon
           
     artifacts:
-      - app/build/outputs/apk/debug/*.apk
+      - app/build/outputs/apk/debug/app-debug.apk
     
     publishing:
       email:
