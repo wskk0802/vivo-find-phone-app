@@ -19,47 +19,61 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
 
-      - name: Install Gradle
-        run: |
-          wget -q https://services.gradle.org/distributions/gradle-8.5-bin.zip -O /tmp/gradle.zip
-          unzip -q /tmp/gradle.zip -d /opt/
-          echo "/opt/gradle-8.5/bin" >> $GITHUB_PATH
-          gradle --version
-
       - name: Setup Android SDK
         uses: android-actions/setup-android@v3
         with:
           api-level: 34
           build-tools: '34.0.0'
 
-      - name: Show environment
+      - name: Create local.properties
         run: |
-          echo "=== Java ==="
-          java -version
-          echo "=== Gradle ==="
-          gradle --version
-          echo "=== Android SDK ==="
-          ls $ANDROID_HOME/
-          echo "=== Project structure ==="
-          ls -la
-          cat settings.gradle
-          echo "=== app/build.gradle ==="
-          cat app/build.gradle
+          echo "sdk.dir=$ANDROID_HOME" > local.properties
+          echo "ANDROID_HOME=$ANDROID_HOME" >> $GITHUB_ENV
 
-      - name: Build Debug APK with verbose output
-        run: gradle assembleDebug --no-daemon --info --stacktrace 2>&1 | tail -100
-        continue-on-error: true
+      - name: Build with Gradle
+        run: |
+          # 下载gradle
+          wget -q https://services.gradle.org/distributions/gradle-8.5-bin.zip -O /tmp/g.zip
+          unzip -q /tmp/g.zip -d /opt/
+          export PATH=/opt/gradle-8.5/bin:$PATH
+          
+          # 创建gradle.properties
+          mkdir -p ~/.gradle
+          echo "org.gradle.jvmargs=-Xmx2048m -Dfile.encoding=UTF-8" > ~/.gradle/gradle.properties
+          echo "android.useAndroidX=true" >> ~/.gradle/gradle.properties
+          
+          # 构建
+          gradle clean assembleDebug --no-daemon --console=plain
+        env:
+          ANDROID_HOME: /usr/local/lib/android/sdk
 
-      - name: Show build output on failure
+      - name: Upload APK
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: vivo-find-phone-apk
+          path: app/build/outputs/apk/debug/app-debug.apk
+          retention-days: 30
+      
+      - name: Show debug info on failure
         if: failure()
         run: |
-          echo "=== build directory ==="
+          echo "=== local.properties ==="
+          cat local.properties
+          echo ""
+          echo "=== gradle.properties ==="
+          cat ~/.gradle/gradle.properties
+          echo ""
+          echo "=== ANDROID_HOME ==="
+          echo $ANDROID_HOME
+          ls $ANDROID_HOME/
+          echo ""
+          echo "=== Project files ==="
+          find . -name "*.gradle" -not -path "*/build/*"
+          echo ""
+          echo "=== Build output ==="
           ls -la app/build/ 2>/dev/null || echo "no build dir"
-          echo "=== gradle error logs ==="
-          find . -name "*.log" -path "*/build/*" 2>/dev/null | head -5
-          echo "=== check if APK was created anyway ==="
+          find app/build -name "*.log" 2>/dev/null | head -5
+          echo ""
+          echo "=== APK files ==="
           find . -name "*.apk" 2>/dev/null
-          echo "=== app/src/main ==="
-          ls -la app/src/main/
-          echo "=== AndroidManifest ==="
-          cat app/src/main/AndroidManifest.xml
