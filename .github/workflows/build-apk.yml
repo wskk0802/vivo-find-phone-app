@@ -13,129 +13,84 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Build APK using Docker
-        run: |
-          set -e
-          
-          # 拉取预配置的Android构建镜像
-          docker pull reactnativedocker/react-native-android:latest 2>/dev/null || \
-          docker pull androidsdk/android-30:latest 2>/dev/null || \
-          docker pull mingc/android-build-box:latest
-          
-          # 创建输出目录
-          mkdir -p $GITHUB_WORKSPACE/output
-          
-          # 用Docker构建
-          docker run --rm \
-            -v $GITHUB_WORKSPACE:/workspace \
-            -w /workspace \
-            --entrypoint="" \
-            mingc/android-build-box:latest \
-            bash -c "
-              cd /workspace
-              # 接受许可证
-              yes | sdkmanager --licenses 2>/dev/null || true
-              # 安装SDK
-              sdkmanager 'platforms;android-34' 'build-tools;34.0.0' 2>/dev/null || true
-              # 设置环境
-              export ANDROID_HOME=\$ANDROID_HOME
-              echo 'sdk.dir='\$ANDROID_HOME > local.properties
-              # 构建
-              chmod +x gradlew 2>/dev/null || true
-              gradle assembleDebug --no-daemon 2>&1 || ./gradlew assembleDebug --no-daemon 2>&1
-              # 复制APK
-              cp app/build/outputs/apk/debug/*.apk /workspace/output/ 2>/dev/null || echo 'APK not found'
-            "
-          
-          echo "=== Output ==="
-          ls -la output/
-        continue-on-error: true
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
 
-      - name: Fallback - manual build if Docker failed
-        if: failure()
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v3
+        with:
+          api-level: 34
+          build-tools: '34.0.0'
+
+      - name: Build APK with Gradle
         run: |
-          set -e
-          echo "Docker方式失败，尝试手动构建..."
-          
-          # 安装JDK
-          sudo apt-get update -qq
-          sudo apt-get install -y -qq wget unzip 2>/dev/null || true
-          
-          # Android SDK
-          export ANDROID_HOME=$HOME/sdk
-          mkdir -p $ANDROID_HOME/cmdline-tools
-          wget -q "https://dl.google.com/android/repository/commandlinetools-linux-11076708_latest.zip" -O /tmp/ct.zip
-          unzip -q /tmp/ct.zip -d $ANDROID_HOME/cmdline-tools/
-          mkdir -p $ANDROID_HOME/cmdline-tools/latest
-          mv $ANDROID_HOME/cmdline-tools/cmdline-tools/* $ANDROID_HOME/cmdline-tools/latest/
-          export PATH=$ANDROID_HOME/cmdline-tools/latest/bin:$PATH
-          
-          # 许可证和组件
-          yes | sdkmanager --licenses 2>&1 | tail -3
-          sdkmanager "platforms;android-34" "build-tools;34.0.0" 2>&1 | tail -5
-          
-          # Gradle
-          wget -q "https://services.gradle.org/distributions/gradle-8.5-bin.zip" -O /tmp/g.zip
-          unzip -q /tmp/g.zip -d /opt/
-          export PATH=/opt/gradle-8.5/bin:$PATH
-          
-          # 配置
+          # 设置环境变量
+          export ANDROID_HOME=$ANDROID_HOME
           echo "sdk.dir=$ANDROID_HOME" > local.properties
+          
+          # Gradle配置
           mkdir -p ~/.gradle
-          echo "org.gradle.jvmargs=-Xmx1536m" > ~/.gradle/gradle.properties
-          echo "android.useAndroidX=true" >> ~/.gradle/gradle.properties
+          cat > ~/.gradle/gradle.properties << 'EOF'
+          org.gradle.jvmargs=-Xmx2048m -Dfile.encoding=UTF-8
+          org.gradle.daemon=false
+          org.gradle.parallel=false
+          android.useAndroidX=true
+          android.enableJetifier=true
+          EOF
+          
+          # 验证SDK
+          echo "=== SDK Info ==="
+          ls $ANDROID_HOME/platforms/
+          ls $ANDROID_HOME/build-tools/
+          
+          # 下载Gradle
+          echo "=== Installing Gradle ==="
+          wget -q https://services.gradle.org/distributions/gradle-8.5-bin.zip -O /tmp/gradle.zip
+          unzip -q /tmp/gradle.zip -d /opt/
+          export GRADLE_HOME=/opt/gradle-8.5
+          export PATH=$GRADLE_HOME/bin:$PATH
+          gradle --version
           
           # 构建
+          echo "=== Building APK ==="
           cd $GITHUB_WORKSPACE
-          gradle clean assembleDebug --no-daemon 2>&1
+          gradle clean assembleDebug --no-daemon --console=plain --stacktrace
           
-          mkdir -p output
-          cp app/build/outputs/apk/debug/*.apk output/
+          echo "=== Build Output ==="
+          find . -name "*.apk" -exec ls -la {} \;
+          ls -la app/build/outputs/apk/debug/
+          
+          # 复制到已知位置
+          mkdir -p /tmp/apk-output
+          cp app/build/outputs/apk/debug/*.apk /tmp/apk-output/ 2>/dev/null || {
+            echo "ERROR: No APK found!"
+            echo "=== Full build dir ==="
+            find app/build -type f | head -30
+            exit 1
+          }
+          
+          echo "=== APK ready ==="
+          ls -la /tmp/apk-output/
+        env:
+          ANDROID_HOME: /usr/local/lib/android/sdk
 
       - name: Upload APK
-        if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: vivo-find-phone-apk
-          path: output/*.apk
+          name: vivo-find-phone-app-debug
+          path: app/build/outputs/apk/debug/app-debug.apk
           retention-days: 30
-        continue-on-error: true
+        if: success()
       
-      - name: Emergency upload
-        if: always()
-        run: |
-          # 如果正常output为空，尝试找任何APK
-          if [ ! -f output/*.apk ] 2>/dev/null; then
-            echo "搜索所有APK文件..."
-            find . -name "*.apk" 2>/dev/null | while read f; do
-              echo "找到: $f"
-              mkdir -p output
-              cp "$f" output/
-            done
-          fi
-          
-          echo "最终output目录:"
-          ls -la output/ 2>/dev/null || echo "output目录为空"
-          
-          # 即使没有APK也上传日志
-          if [ ! -f output/*.apk ] 2>/dev/null; then
-            echo "构建失败，收集诊断信息..."
-            {
-              echo "=== Build Environment ==="
-              echo "Date: $(date)"
-              echo "Runner OS: $RUNNER_OS"
-              echo "Java: $(java -version 2>&1)"
-              echo ""
-              echo "=== Project Files ==="
-              find . -maxdepth 3 -type f -not -path "*/.git/*" -not -path "*/build/*" | sort
-              echo ""
-              echo "=== Android SDK ==="
-              ls $ANDROID_HOME/ 2>/dev/null
-              ls $ANDROID_HOME/platforms/ 2>/dev/null
-              echo ""
-              echo "=== Build Output ==="
-              ls -laR app/build/ 2>/dev/null | head -30
-            } > output/build-diagnostic.txt
-          fi
-          
-          ls -la output/
+      - name: Upload diagnostic on failure
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-diagnostic
+          path: |
+            app/build/outputs/
+            ~/.gradle/caches/
+          retention-days: 7
+        if: failure()
