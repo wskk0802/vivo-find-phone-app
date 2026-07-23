@@ -1,0 +1,49 @@
+workflows:
+  build:
+    name: Build APK Debug
+    instance_type: mac_mini_m2
+    max_build_duration: 30
+    
+    environment:
+      groups:
+        - android
+    
+    scripts:
+      - name: Show environment info
+        script: |
+          echo "=== Environment ==="
+          echo "PWD: $(pwd)"
+          echo "CM_BUILD_DIR: $CM_BUILD_DIR"
+          echo ""
+          echo "=== Java ==="
+          which java || echo "java not found"
+          java -version 2>&1 || true
+          echo ""
+          echo "=== Android SDK ==="
+          echo "ANDROID_SDK_ROOT: $ANDROID_SDK_ROOT"
+          ls $ANDROID_SDK_ROOT/ 2>/dev/null || echo "SDK dir not found"
+          echo ""
+          echo "=== Project files ==="
+          ls -la $CM_BUILD_DIR/
+          echo ""
+          echo "=== gradlew ==="
+          ls -la $CM_BUILD_DIR/gradlew 2>/dev/null || echo "no gradlew"
+          ls -la $CM_BUILD_DIR/gradle/wrapper/ 2>/dev/null || echo "no wrapper dir"
+          
+      - name: Build APK
+        script: |
+          cd $CM_BUILD_DIR
+          echo "sdk.dir=$ANDROID_SDK_ROOT" > local.properties
+          chmod +x gradlew
+          ./gradlew clean assembleDebug --no-daemon --console=plain --stacktrace 2>&1
+          
+    artifacts:
+      - app/build/outputs/apk/debug/app-debug.apk
+    
+    publishing:
+      email:
+        recipients:
+          - 2823893928@qq.com
+        notify:
+          success: true
+          failure: true
